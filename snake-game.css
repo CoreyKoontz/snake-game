@@ -1,8 +1,19 @@
 body {
-    background-color: lightslategrey;
+    background-color: #3084F2;
 }
 
-#snakeboard {
+#title {
+    text-align: center;
+    color: #0F1A59;
+
+}
+canvas {
+    border: 5px solid #F2921D;
+    background-color: #D9D2D0;
+    border-radius: 5px;
+}
+
+#gameCanvas {
     position: absolute;
     top: 50%;
     left: 50%;
