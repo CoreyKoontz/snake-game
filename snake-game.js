@@ -12,16 +12,16 @@
 
 
     // ------------------------------------------ Making the game canvas ----------------------------------------------------------------
-    const snakeBoard = $("#gameCanvas");
-    const snakeBoard_ctx = gameCanvas.getContext("2d"); // ctx is just short for context
+    const snakeBoard = $('#gameCanvas')[0];
+    const snakeBoard_ctx = snakeBoard.getContext("2d"); // ctx is just short for context
 
     // Creating a function to clear the canvas:
-    // const clearCanvas = () => {
-    //     snakeBoard_ctx.fillStyle = '#D9D2D0';
-    //     snakeBoard_ctx.strokeStyle = '5px solid #F2921D';
-    //     snakeBoard_ctx.fillRect(0, 0, snakeBoard.width, snakeBoard.height);
-    //     snakeBoard_ctx.strokeRect(0, 0, snakeBoard.width, snakeBoard.height);
-    // };   //**** NOT SURE IF I NEED THIS OR NOT ****
+    const clearCanvas = () => {
+        snakeBoard_ctx.fillStyle = '#D9D2D0';
+        snakeBoard_ctx.strokeStyle = '5px solid #F2921D';
+        snakeBoard_ctx.fillRect(0, 0, snakeBoard.width, snakeBoard.height);
+        snakeBoard_ctx.strokeRect(0, 0, snakeBoard.width, snakeBoard.height);
+    };   // This also has an effect on the tail end of the snake disappearing as the snake moves forward
 
 
     // --------------------------------------------- Making the snake ---------------------------------------------------------------
@@ -54,7 +54,8 @@
     // dx is the horizontal velocity of the snake. We need to create a function move_snake that will update the snake.
     // The moveSnake function is creating a new head and .unshift() (adding) it to the front of the snake array.
     // While simultaneously using .pop() to remove the last element of the snake
-    let dx = 10;
+    let dx = 10; //Setting this starts the snake off in motion to the right.
+
     const moveSnake = () => {
         const head = {x: snake[0].x + dx, y: snake[0].y + dy};
         snake.unshift(head);
@@ -68,22 +69,46 @@
     // *** Automatic Movement ***
     // To move the snake automatically we will need to set up a setTimeout function to call the
     // moveSnake and drawSnake on set time intervals.
-function main (){
+
+function main () {
     setTimeout(function onTick() {
-        // clearCanvas(); // DONT THINK I NEED THIS
+        clearCanvas(); // DONT THINK I NEED THIS
         moveSnake();
         drawSnake();
         main();
-        }, 350);
+        }, 225);
 }
 
-    // -------------------------- main function called repeatedly to keep the game running -------------------------------------------------------
+    // --------------------------------------- Changing Direction --------------------------------------------------------
+
+    $("body").on("keydown", function(e) {
+    let keyPressed = e.keyCode;
+    const goUp = dy === -10;
+    const goDown = dy === 10;
+    const goRight = dx === 10;
+    const goLeft = dx === -10;
+
+        if (keyPressed === 37 && !goRight) { // move left
+            dx = -10;
+            dy = 0;
+        }
+        if (keyPressed === 39 && !goLeft) { // move right
+            dx = 10;
+            dy = 0;
+        }
+        if (keyPressed === 38 && !goDown) { // move up
+            dx = 0;
+            dy = -10;
+        }
+        if (keyPressed === 40 && !goUp) { // move down
+            dx = 0;
+            dy = 10;
+        }
+
+    })
 
 
     // Start game:
     main();
-
-
-
 
 })();
