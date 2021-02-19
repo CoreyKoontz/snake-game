@@ -54,6 +54,7 @@
     // dx is the horizontal velocity of the snake. We need to create a function move_snake that will update the snake.
     // The moveSnake function is creating a new head and .unshift() (adding) it to the front of the snake array.
     // While simultaneously using .pop() to remove the last element of the snake
+    let dx = 10;
     const moveSnake = () => {
         const head = {x: snake[0].x + dx, y: snake[0].y + dy};
         snake.unshift(head);
@@ -63,15 +64,21 @@
     // *** Vertical Movement ***
     // Only the y-coordinate of the head needs to be altered to avoid moving the entire snake on the y-axis
     // To implement this we must update the moveSnake function and increase the y-coordinate of the head by dy.
-
+    let dy = 0;
     // *** Automatic Movement ***
-    // To move the snake automatically
+    // To move the snake automatically we will need to set up a setTimeout function to call the
+    // moveSnake and drawSnake on set time intervals.
+function main (){
+    setTimeout(function onTick() {
+        // clearCanvas(); // DONT THINK I NEED THIS
+        moveSnake();
+        drawSnake();
+        main();
+        }, 350);
+}
 
     // -------------------------- main function called repeatedly to keep the game running -------------------------------------------------------
-    const main = () => {
-     // clearCanvas(); //*** NOT SURE IF I NEED THIS ***
-        drawSnake();
-    };
+
 
     // Start game:
     main();
