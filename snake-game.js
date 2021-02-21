@@ -72,6 +72,7 @@
 
 function main () {
     setTimeout(function onTick() {
+        if (hasGameEnded()) return;
         clearCanvas(); // DONT THINK I NEED THIS
         moveSnake();
         drawSnake();
@@ -106,6 +107,23 @@ function main () {
         }
 
     })
+
+    // ----------------------------------------- Adding Boundaries ----------------------------------------------------
+
+let hasGameEnded = () => {
+    for (let i = 4; i < snake.length; i++) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+            return true;
+        }
+    }
+        const collideRight = snake[0].x < 0;
+        const collideLeft = snake[0].x > snakeBoard.width - 10;
+        const collideTop = snake[0].y < 0;
+        const collideBottom = snake[0].y > snakeBoard.height -10;
+        return collideRight || collideLeft || collideTop || collideBottom;
+    }
+
+
 
 
     // Start game:
