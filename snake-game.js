@@ -76,6 +76,7 @@ function main () {
         clearCanvas(); // DONT THINK I NEED THIS
         moveSnake();
         drawSnake();
+        drawFood();
         main();
         }, 225);
 }
@@ -112,7 +113,7 @@ function main () {
 
 let hasGameEnded = () => {
     for (let i = 4; i < snake.length; i++) {
-        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {  // conditional to see if the snake has collided with itself
             return true;
         }
     }
@@ -122,6 +123,41 @@ let hasGameEnded = () => {
         const collideBottom = snake[0].y > snakeBoard.height -10;
         return collideRight || collideLeft || collideTop || collideBottom;
     }
+
+    // ------------------------------------------- Food, Size and Score ------------------------------------------------------
+
+    // Need to generate a random set of coordinates to place the snake food
+    // Math is a built in object with mathematical constants and function
+    // .round returns the value of a number to the nearest integer
+    // .random will generate a random number from 0-1. So you will have to scale it to your desired range.
+
+    // TODO: math on this looks funny see if it can be refactored later
+    let randomFood = (min, max) => {
+    return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+    };
+
+    // random food placement generating function:
+    let genFood = () => {
+        let foodX = randomFood(0, snakeBoard.width - 10);
+        let foodY = randomFood(0, snakeBoard.height - 10);
+        snake.forEach(function hasSnakeEatenFood (part) {
+            const hasEaten = part.x == foodX && part.y == foodY;// conditional to see if the snake ate the food and generate new food if true
+            if (hasEaten) {
+                genFood();
+            }
+        });
+    }
+
+    // function for drawing the food on the canvas:
+    let drawFood = () => {
+        snakeBoard_ctx.fillStyle = 'lightgreen';
+        snakeBoard_ctx.strokeStyle = 'darkgreen';
+        snakeBoard_ctx.fillRect(foodX, foodY, 10, 10); //TODO: not sure that the FoodX and FoodY variables are in scope
+        snakeBoard_ctx.strokeRect(foodX, foodY, 10, 10);
+    }
+
+    // ------------------------------------------- Growing the Snake ----------------------------------------------------------
+
 
 
 
