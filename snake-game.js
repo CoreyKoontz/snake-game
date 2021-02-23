@@ -31,7 +31,7 @@
         {x: 180, y: 200},
         {x: 170, y: 200},
         {x: 160, y: 200}
-        ];
+    ];
 
     let drawSnakePart = (snakePart) => {
         // Property of the Canvas 2D API specifies the color, gradient, or pattern to use inside shapes.
@@ -45,7 +45,9 @@
     };
 
     // Displays the snake parts:
-    const drawSnake = () => {snake.forEach(drawSnakePart)};
+    const drawSnake = () => {
+        snake.forEach(drawSnakePart)
+    };
 
 
     // --------------------------------------- Moving the snake automatically ---------------------------------------------------------------
@@ -56,11 +58,11 @@
     // While simultaneously using .pop() to remove the last element of the snake
     let dx = 10; //Setting this starts the snake off in motion to the right.
 
-    const moveSnake = () => {
-        const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-        snake.unshift(head);
-        snake.pop();
-    };
+    // const moveSnake = () => {
+    //     const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+    //     snake.unshift(head);
+    //     snake.pop();
+    // };
 
     // *** Vertical Movement ***
     // Only the y-coordinate of the head needs to be altered to avoid moving the entire snake on the y-axis
@@ -70,25 +72,27 @@
     // To move the snake automatically we will need to set up a setTimeout function to call the
     // moveSnake and drawSnake on set time intervals.
 
-function main () {
-    setTimeout(function onTick() {
-        if (hasGameEnded()) return;
-        clearCanvas(); // DONT THINK I NEED THIS
-        moveSnake();
-        drawSnake();
-        drawFood();
-        main();
-        }, 225);
-}
+    genFood();
+
+    function main() {
+        setTimeout(function onTick() {
+            if (hasGameEnded()) return;
+            clearCanvas(); // DONT THINK I NEED THIS
+            moveSnake();
+            drawSnake();
+            drawFood();
+            main();
+        }, 225); // the speed at which the snake moves
+    }
 
     // --------------------------------------- Changing Direction --------------------------------------------------------
 
-    $("body").on("keydown", function(e) {
-    let keyPressed = e.keyCode;
-    const goUp = dy === -10;
-    const goDown = dy === 10;
-    const goRight = dx === 10;
-    const goLeft = dx === -10;
+    $("body").on("keydown", function (e) {
+        let keyPressed = e.keyCode;
+        const goUp = dy === -10;
+        const goDown = dy === 10;
+        const goRight = dx === 10;
+        const goLeft = dx === -10;
 
         if (keyPressed === 37 && !goRight) { // move left
             dx = -10;
@@ -111,16 +115,16 @@ function main () {
 
     // ----------------------------------------- Adding Boundaries ----------------------------------------------------
 
-let hasGameEnded = () => {
-    for (let i = 4; i < snake.length; i++) {
-        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {  // conditional to see if the snake has collided with itself
-            return true;
+    let hasGameEnded = () => {
+        for (let i = 4; i < snake.length; i++) {
+            if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {  // conditional to see if the snake has collided with itself
+                return true;
+            }
         }
-    }
         const collideRight = snake[0].x < 0;
         const collideLeft = snake[0].x > snakeBoard.width - 10;
         const collideTop = snake[0].y < 0;
-        const collideBottom = snake[0].y > snakeBoard.height -10;
+        const collideBottom = snake[0].y > snakeBoard.height - 10;
         return collideRight || collideLeft || collideTop || collideBottom;
     }
 
@@ -133,15 +137,17 @@ let hasGameEnded = () => {
 
     // TODO: math on this looks funny see if it can be refactored later
     let randomFood = (min, max) => {
-    return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+        return Math.round((Math.random() * (max - min) + min) / 10) * 10;
     };
 
     // random food placement generating function:
+
+    let foodX = randomFood(0, snakeBoard.width - 10); // x-axis range for random food placement
+    let foodY = randomFood(0, snakeBoard.height - 10); // y-axis range for random food placement
+
     let genFood = () => {
-        let foodX = randomFood(0, snakeBoard.width - 10);
-        let foodY = randomFood(0, snakeBoard.height - 10);
-        snake.forEach(function hasSnakeEatenFood (part) {
-            const hasEaten = part.x == foodX && part.y == foodY;// conditional to see if the snake ate the food and generate new food if true
+        snake.forEach(function hasSnakeEatenFood(part) {
+            const hasEaten = part.x === foodX && part.y === foodY;// conditional to see if the snake ate the food and generate new food if true
             if (hasEaten) {
                 genFood();
             }
@@ -152,14 +158,28 @@ let hasGameEnded = () => {
     let drawFood = () => {
         snakeBoard_ctx.fillStyle = 'lightgreen';
         snakeBoard_ctx.strokeStyle = 'darkgreen';
-        snakeBoard_ctx.fillRect(foodX, foodY, 10, 10); //TODO: not sure that the FoodX and FoodY variables are in scope
+        snakeBoard_ctx.fillRect(foodX, foodY, 10, 10);
         snakeBoard_ctx.strokeRect(foodX, foodY, 10, 10);
     }
 
     // ------------------------------------------- Growing the Snake ----------------------------------------------------------
+    // Commenting out the old moveSnake function so that I can add the updated version here:
+    // The update will include a way of growing the snake when it eats food and a way to keep score
+    // We arent actually growing the snake when it eats, but rather, we are not going to .pop the
+    // last body item when it does.
 
-
-
+    let $score = $('#score'); // Get the score element
+    const moveSnake = () => {
+        const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+        snake.unshift(head);
+        const hasEatenFood = snake[0].x === foodX && snake[0].y === foodY;
+        if (hasEatenFood) {
+            $score = $score.text($score.text() + 10)
+            genFood();// generate more food, in a random location, when the snake has eaten what is on the board
+        } else {
+            snake.pop(); // remove last part of snake body
+        }
+    };
 
 
     // Start game:
